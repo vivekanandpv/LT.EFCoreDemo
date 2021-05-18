@@ -1,4 +1,6 @@
 using LT.EFCoreDemo.Data;
+using LT.EFCoreDemo.Repositories;
+using LT.EFCoreDemo.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -33,6 +35,9 @@ namespace LT.EFCoreDemo
                 options.UseSqlServer(_configuration.GetConnectionString("Development"));
                 //options.UseSqlServer(_configuration["ConnectionStrings:Development"]);    //  also possible
             });
+
+            services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IProductRepository, ProductRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
