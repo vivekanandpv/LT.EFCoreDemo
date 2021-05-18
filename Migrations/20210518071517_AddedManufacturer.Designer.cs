@@ -3,14 +3,16 @@ using LT.EFCoreDemo.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace LT.EFCoreDemo.Migrations
 {
     [DbContext(typeof(InventoryContext))]
-    partial class InventoryContextModelSnapshot : ModelSnapshot
+    [Migration("20210518071517_AddedManufacturer")]
+    partial class AddedManufacturer
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -68,36 +70,6 @@ namespace LT.EFCoreDemo.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("LT.EFCoreDemo.Models.ProductWarehouse", b =>
-                {
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WarehouseId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ProductId", "WarehouseId");
-
-                    b.HasIndex("WarehouseId");
-
-                    b.ToTable("ProductWarehouseCollection");
-                });
-
-            modelBuilder.Entity("LT.EFCoreDemo.Models.Warehouse", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Warehouses");
-                });
-
             modelBuilder.Entity("LT.EFCoreDemo.Models.Product", b =>
                 {
                     b.HasOne("LT.EFCoreDemo.Models.Manufacturer", "Manufacturer")
@@ -109,38 +81,9 @@ namespace LT.EFCoreDemo.Migrations
                     b.Navigation("Manufacturer");
                 });
 
-            modelBuilder.Entity("LT.EFCoreDemo.Models.ProductWarehouse", b =>
-                {
-                    b.HasOne("LT.EFCoreDemo.Models.Product", "Product")
-                        .WithMany("ProductWarehouseMappings")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("LT.EFCoreDemo.Models.Warehouse", "Warehouse")
-                        .WithMany("ProductWarehouseMappings")
-                        .HasForeignKey("WarehouseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-
-                    b.Navigation("Warehouse");
-                });
-
             modelBuilder.Entity("LT.EFCoreDemo.Models.Manufacturer", b =>
                 {
                     b.Navigation("Products");
-                });
-
-            modelBuilder.Entity("LT.EFCoreDemo.Models.Product", b =>
-                {
-                    b.Navigation("ProductWarehouseMappings");
-                });
-
-            modelBuilder.Entity("LT.EFCoreDemo.Models.Warehouse", b =>
-                {
-                    b.Navigation("ProductWarehouseMappings");
                 });
 #pragma warning restore 612, 618
         }
