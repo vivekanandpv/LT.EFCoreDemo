@@ -93,7 +93,8 @@ namespace LT.EFCoreDemo.Services
 
         private double GetTotalPrice(double basePrice, double taxRate, double discountRate)
         {
-            return basePrice + (basePrice * taxRate) - (basePrice * discountRate);
+            var effectivePrice = basePrice - (basePrice * discountRate);
+            return effectivePrice + (effectivePrice * taxRate);
         }
     }
 }
