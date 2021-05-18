@@ -1,35 +1,99 @@
-﻿using LT.EFCoreDemo.ViewModels;
+﻿using LT.EFCoreDemo.Models;
+using LT.EFCoreDemo.Repositories;
+using LT.EFCoreDemo.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace LT.EFCoreDemo.Services
 {
     public class ProductService : IProductService
     {
-        public Task Create(ProductCreateViewModel viewModel)
+        private readonly IProductRepository _repository;
+
+        public ProductService(IProductRepository repository)
         {
-            throw new NotImplementedException();
+            _repository = repository;
         }
 
-        public Task Delete(int id)
+        public async Task Create(ProductCreateViewModel viewModel)
         {
-            throw new NotImplementedException();
+            await _repository.Create(ToProduct(viewModel));
         }
 
-        public Task<IEnumerable<ProductViewModel>> Get()
+        public async Task Delete(int id)
         {
-            throw new NotImplementedException();
+            await _repository.Delete(id);
         }
 
-        public Task<ProductViewModel> Get(int id)
+        public async Task<IEnumerable<ProductViewModel>> Get()
         {
-            throw new NotImplementedException();
+            return (await _repository.Get()).Select(p => ToViewModel(p));
+
         }
 
-        public Task Update(ProductUpdateViewModel viewModel)
+        public async Task<ProductViewModel> Get(int id)
         {
-            throw new NotImplementedException();
+            var productDb = await _repository.Get(id);
+
+            if (productDb != null)
+            {
+                return ToViewModel(productDb);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public async Task Update(ProductUpdateViewModel viewModel)
+        {
+            await _repository.Update(ToProduct(viewModel));
+        }
+
+        private Product ToProduct(ProductUpdateViewModel viewModel)
+        {
+            return new Product
+            {
+                BasePrice = viewModel.BasePrice,
+                Category = viewModel.Category,
+                DiscountRate = viewModel.DiscountRate,
+                Name = viewModel.Name,
+                TaxRate = viewModel.TaxRate,
+                Id = viewModel.Id,
+            };
+        }
+
+        private Product ToProduct(ProductCreateViewModel viewModel)
+        {
+            return new Product
+            {
+                BasePrice = viewModel.BasePrice,
+                Category = viewModel.Category,
+                DiscountRate = viewModel.DiscountRate,
+                Name = viewModel.Name,
+                TaxRate = viewModel.TaxRate,
+            };
+        }
+
+        private ProductViewModel ToViewModel(Product product)
+        {
+            return new ProductViewModel
+            {
+                BasePrice = product.BasePrice,
+                Category = product.Category,
+                DiscountRate = product.DiscountRate,
+                Name = product.Name,
+                TaxRate = product.TaxRate,
+                Id = product.Id,
+                TotalPrice = GetTotalPrice(product.BasePrice, product.TaxRate, product.DiscountRate)
+            };
+        }
+
+        private double GetTotalPrice(double basePrice, double taxRate, double discountRate)
+        {
+            return basePrice + (basePrice * taxRate) - (basePrice * discountRate);
         }
     }
 }
